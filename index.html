@@ -627,3 +627,190 @@
     </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="tr" class="dark">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Ders Rehberi — Eksiksiz Kişisel Çalışma Alanı</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #0b0f19; color: #f1f5f9; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0b0f19; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+        
+        /* 100. GÜN ÖZEL HAREKETLİ ARKA PLAN EFEKTİ */
+        .day-100-effect {
+            background: linear-gradient(-45deg, #0b0f19, #2e1065, #1e1b4b, #030712);
+            background-size: 400% 400%;
+            animation: gradientBG 10s ease infinite;
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+    </style>
+</head>
+<body id="mainBody" class="min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+
+    <!-- İLK GİRİŞ / PROFİL OLUŞTURMA MODALI -->
+    <div id="onboardingModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-5">
+            <div class="text-center space-y-2">
+                <span class="text-3xl">🎓</span>
+                <h2 class="text-xl font-bold text-white">Ders Rehberi'ne Hoş Geldin!</h2>
+                <p class="text-xs text-slate-400">Sana özel çalışma alanını hazırlayabilmemiz için lütfen bilgilerini gir.</p>
+            </div>
+            <form onsubmit="saveUserProfile(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">ADIN VE SOYADIN</label>
+                    <input type="text" id="userNameInput" required placeholder="Örn: Ahmet Yılmaz" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm outline-none focus:border-indigo-500 transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">CİNSİYETİN</label>
+                    <select id="userGenderInput" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm outline-none focus:border-indigo-500 transition">
+                        <option value="erkek">Erkek</option>
+                        <option value="kadin">Kız</option>
+                        <option value="diger">Belirtmek İstemiyorum</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-sm transition shadow-lg shadow-indigo-600/30">
+                    Yolculuğa Başla 🚀
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ANA İSKELET -->
+    <div class="app-shell flex flex-1 min-h-screen">
+
+        <!-- SOL MENÜ -->
+        <aside class="sidebar w-64 bg-[#0b0f19] border-r border-slate-800 flex flex-col p-4 shrink-0 select-none">
+            <a href="#" class="brand flex items-center gap-2.5 px-2 py-3 mb-4 text-white font-bold text-lg">
+                <span class="w-8 h-8 rounded-lg bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400">📖</span>
+                <span>Ders<span class="text-indigo-400">Rehberi</span></span>
+            </a>
+            
+            <div class="workspace-label text-[10px] font-bold tracking-wider text-slate-500 px-2 mb-2">KİŞİSEL ÇALIŞMA ALANIN</div>
+            
+            <nav class="main-nav space-y-1 flex-1">
+                <button onclick="switchView('discover')" id="nav-discover" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition text-indigo-400 bg-indigo-600/10 border border-indigo-500/20">
+                    <span>🏠</span> Keşfet
+                </button>
+                <button onclick="switchView('tests')" id="nav-tests" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition text-slate-400 hover:text-white hover:bg-slate-800/50">
+                    <span>✍️</span> Mini testler
+                </button>
+                <button onclick="switchView('saved')" id="nav-saved" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition text-slate-400 hover:text-white hover:bg-slate-800/50">
+                    <span>🔖</span> Kaydedilenler
+                </button>
+                <button onclick="switchView('progress')" id="nav-progress" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition text-slate-400 hover:text-white hover:bg-slate-800/50">
+                    <span>📊</span> İlerlemem
+                </button>
+                <button onclick="switchView('badges')" id="nav-badges" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition text-slate-400 hover:text-white hover:bg-slate-800/50">
+                    <span>🏆</span> Rozetlerim
+                </button>
+            </nav>
+
+            <div class="sidebar-note mt-auto bg-gradient-to-br from-slate-800/60 to-slate-900 border border-slate-800 p-3.5 rounded-xl text-xs space-y-1.5">
+                <p class="font-semibold text-slate-200">Her gün biraz,<br/><strong class="text-indigo-400">her gün ileri.</strong></p>
+                <span class="text-[10px] text-slate-400 block">Senin hızın, senin yolculuğun.</span>
+            </div>
+        </aside>
+
+        <!-- MASAÜSTÜ WORKSPACE -->
+        <div class="workspace flex-1 flex flex-col min-w-0 bg-transparent">
+            
+            <!-- ÜST BAR -->
+            <header class="topbar h-16 border-b border-slate-800 px-6 flex items-center justify-between bg-[#0b0f19]/80 backdrop-blur sticky top-0 z-40">
+                <div class="breadcrumb flex items-center gap-2 text-xs text-slate-400 font-medium">
+                    <span>Çalışma alanım</span>
+                    <span>/</span>
+                    <strong id="currentBreadcrumb" class="text-white">Keşfet</strong>
+                </div>
+                <div class="topbar-actions flex items-center gap-4">
+                    <!-- Seri Göstergesi -->
+                    <div class="flex items-center gap-1.5 bg-amber-950/60 border border-amber-800/50 px-3 py-1.5 rounded-full text-amber-400 text-xs font-bold">
+                        🔥 <span id="streakDisplay">1</span> Gün Seri
+                    </div>
+
+                    <button onclick="toggleTheme()" class="theme-toggle px-3 py-1.5 rounded-full border border-slate-700 bg-slate-800 text-slate-300 text-xs font-semibold hover:bg-slate-700 transition">
+                        🌓 <span id="themeLabel">Açık tema</span>
+                    </button>
+                    
+                    <!-- Öğrenci Profil Bilgisi -->
+                    <div class="student-profile flex items-center gap-2.5 bg-slate-800/80 border border-slate-700/60 px-3 py-1.5 rounded-xl cursor-pointer" onclick="editProfile()">
+                        <span id="profileAvatar" class="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center text-xs font-bold text-white">Ö</span>
+                        <div class="text-xs">
+                            <strong id="profileNameDisplay" class="block text-slate-200 leading-tight">Öğrenci</strong>
+                            <span class="text-[10px] text-slate-400">Aktif Öğrenci</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- İÇERİK ALANI -->
+            <div class="content-layout flex-1 flex">
+                <main id="mainContent" class="main-content flex-1 p-6 space-y-8 max-w-5xl">
+                    <!-- Dinamik İçerik -->
+                </main>
+
+                <!-- SAĞ PANEL -->
+                <aside class="study-rail w-80 border-l border-slate-800 p-5 hidden xl:block space-y-6 shrink-0">
+                    <div class="rail-heading flex items-center justify-between text-xs font-bold text-slate-400 tracking-wider">
+                        <span>ÇALIŞMA KÖŞEN</span>
+                        <span class="text-indigo-400">✨</span>
+                    </div>
+
+                    <!-- Günün İpucu -->
+                    <div class="daily-tip bg-slate-800/40 border border-slate-800 p-4 rounded-2xl space-y-2">
+                        <div class="flex items-center gap-2 text-amber-400 text-xs font-bold">
+                            <span>💡</span> GÜNÜN İPUCU
+                        </div>
+                        <h3 class="text-sm font-bold text-white leading-snug">Anlamak, ezberlemekten <em class="text-indigo-400 font-normal">daha kalıcıdır.</em></h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">Öğrendiğin bir konuyu kendi cümlelerinle anlatmayı dene!</p>
+                    </div>
+
+                    <!-- Günün Hedefi -->
+                    <div class="daily-goal bg-slate-800/40 border border-slate-800 p-4 rounded-2xl space-y-3">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xs font-bold text-white">Bugün bir adım at</h3>
+                            <span class="text-indigo-400">🎯</span>
+                        </div>
+                        <p class="text-xs text-slate-400">Küçük bir hedef, güzel bir başlangıç.</p>
+                        <div class="flex justify-between items-center text-xs font-semibold text-slate-300">
+                            <span>Bir mini test tamamla</span>
+                            <span id="goalStat">0/1</span>
+                        </div>
+                        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                            <div id="goalBar" class="bg-indigo-500 h-full w-0 transition-all duration-300"></div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+
+            <!-- FOOTER -->
+            <footer class="workspace-footer border-t border-slate-800 px-6 py-4 flex justify-between items-center text-xs text-slate-500">
+                <span>Ders Rehberi</span>
+                <span>Merakla başlayan her şey, öğrenmeye dönüşür.</span>
+                <span class="text-indigo-400">Birlikte daha ileri ↗</span>
+            </footer>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT & GENİŞLETİLMİŞ TAM DERS KÜTÜPHANESİ -->
+    <script>
+        let userProfile = JSON.parse(localStorage.getItem('dr_user')) || null;
+        let stats = JSON.parse(localStorage.getItem('dr_stats')) || { solvedTests: 0, correctAnswers: 0, badges: ['badge1'], streak: 1, lastLogin: '' };
+        let savedTopics = JSON.parse(localStorage.getItem('dr_saved')) || [];
+
+        // TÜM DERSLERİ KAPSAYAN GENİŞLETİLMİŞ KONU VERİ TABANI
+        const TOPICS_DB = {
+            matematik: [
+                { id: 'm1', title: 'Kesirler', desc: 'Bütünün eş parçaları, sadeleştirme ve dört işlem.', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4', quiz: { q: '3/4 kesrinin 2 katı kaçtır?', opts: ['3/2', '6/8', '3/8', '6/4'], correct: 0 }, content: 'Kesirler, bir bütünün eş parçalarını ifade eder.' },
+                { id: 'm2', title: 'Ondalık Gösterim', desc: 'Virgüllü sayılar ve basamak değerleri.', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4', quiz: { q: '0.5 sayısı hangi kesre eşittir?', opts: ['1/4', '1/2', '3/4', '1/5'], correct: 1 }, content: 'Paydası 10, 100, 1000 olan kesirlerin
